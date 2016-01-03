@@ -28,6 +28,9 @@ const WINNING_SCORE = 3;
 window.onload = () => {
 
   c = document.getElementById('game');
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+
   cc = c.getContext('2d');
 
   let fps = 30;

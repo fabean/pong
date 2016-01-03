@@ -30,6 +30,9 @@ var WINNING_SCORE = 3;
 window.onload = function () {
 
   c = document.getElementById('game');
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+
   cc = c.getContext('2d');
 
   var fps = 30;
