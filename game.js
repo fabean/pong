@@ -125,9 +125,14 @@ var drawEverything = function drawEverything() {
     } else {
       message = 'Player 2 won!';
     }
-    cc.fillStyle = 'white';
-    cc.fillText(message, c.width / 2, 50);
-    cc.fillText('Click to continue', c.width / 2, 150);
+    ccc.fillStyle = 'white';
+    cc.font = "20px Helvetica";
+
+    var messageTextWidth = cc.measureText(message);
+    cc.fillText(message, c.width / 2 - messageTextWidth.width / 2, 50);
+    var continueTextWidth = cc.measureText('Click to continue');
+    cc.fillText('Click to continue', c.width / 2 - continueTextWidth.width / 2, 150);c.fillStyle = 'white';
+
     return;
   }
 
@@ -147,6 +152,7 @@ var drawEverything = function drawEverything() {
   colorRect(c.width - PADDLE_WIDTH, player2.y, PADDLE_WIDTH, PADDLE_HEIGHT, 'white');
 
   // score
+  cc.font = "20px helvetica";
   cc.fillText(player1.score, 100, 50);
   cc.fillText(player2.score, c.width - 100, 50);
 };
