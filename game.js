@@ -6,9 +6,11 @@ cc = undefined,
 winScreen = false,
     ball = {
   'speedX': 10,
+  'initSpeed': 10,
   'speedY': 4,
   'x': 50,
-  'y': 50
+  'y': 50,
+  'size': 10
 },
     player1 = {
   'y': 210,
@@ -25,13 +27,17 @@ winScreen = false,
 
 var PADDLE_HEIGHT = 100;
 var PADDLE_WIDTH = 10;
-var WINNING_SCORE = 3;
+var WINNING_SCORE = 5;
 
 window.onload = function () {
 
   c = document.getElementById('game');
   c.width = window.innerWidth;
   c.height = window.innerHeight;
+
+  // reset ball x&y to middle since we now have size of screen.
+  ball.x = c.width / 2;
+  ball.y = c.height / 2;
 
   cc = c.getContext('2d');
 
@@ -72,10 +78,18 @@ var calculateMousePos = function calculateMousePos(event) {
 
 var ai = function ai() {
   var player2Center = player2.y + PADDLE_HEIGHT / 2;
-  if (player2Center < ball.y - 35) {
-    player2.y += 6;
-  } else if (player2Center > ball.y + 35) {
-    player2.y -= 6;
+  if (Math.sign(ball.speedX) === 1) {
+    if (player2Center < ball.y - 35) {
+      player2.y += 10;
+    } else if (player2Center > ball.y + 35) {
+      player2.y -= 10;
+    }
+  } else {
+    if (player2Center < c.height / 2 - 20) {
+      player2.y += 6;
+    } else if (player2Center > c.height / 2 + 20) {
+      player2.y -= 6;
+    }
   }
 };
 
@@ -86,20 +100,22 @@ var moveEverything = function moveEverything() {
   // ball
   ball.x += ball.speedX;
   ball.y += ball.speedY;
-  if (ball.x > c.width) {
+  if (ball.x > c.width - PADDLE_WIDTH) {
     // hitting right side
-    if (ball.y > player2.y && ball.y < player2.y + PADDLE_HEIGHT) {
-      ball.speedX = -ball.speedX;
+    // added ball.size/2 which should make it so any part of the ball hits the paddle are it reflects back
+    if (ball.y > player2.y - ball.size && ball.y < player2.y + PADDLE_HEIGHT + ball.size) {
+      ball.speedX = -(ball.speedX * 1.2);
       var deltaY = ball.y - (player2.y + PADDLE_HEIGHT / 2);
       ball.speedY = deltaY * .35;
     } else {
       player1.score++;
       resetBall();
     }
-  } else if (ball.x < 0) {
+  } else if (ball.x <= 0 + PADDLE_WIDTH) {
     // hitting left side
-    if (ball.y > player1.y && ball.y < player1.y + PADDLE_HEIGHT) {
-      ball.speedX = -ball.speedX;
+    if (ball.y > player1.y - ball.size && ball.y < player1.y + PADDLE_HEIGHT + ball.size) {
+      ball.speedX = -(ball.speedX * 1.2);
+
       var deltaY = ball.y - (player1.y + PADDLE_HEIGHT / 2);
       ball.speedY = deltaY * .35;
     } else {
@@ -125,14 +141,12 @@ var drawEverything = function drawEverything() {
     } else {
       message = 'Player 2 won!';
     }
-    ccc.fillStyle = 'white';
+    cc.fillStyle = 'white';
     cc.font = "20px Helvetica";
-
     var messageTextWidth = cc.measureText(message);
     cc.fillText(message, c.width / 2 - messageTextWidth.width / 2, 50);
     var continueTextWidth = cc.measureText('Click to continue');
-    cc.fillText('Click to continue', c.width / 2 - continueTextWidth.width / 2, 150);c.fillStyle = 'white';
-
+    cc.fillText('Click to continue', c.width / 2 - continueTextWidth.width / 2, 150);
     return;
   }
 
@@ -140,7 +154,7 @@ var drawEverything = function drawEverything() {
   colorRect(0, 0, c.width, c.height, 'black');
 
   // ball
-  colorCircle(ball.x, ball.y, 10, 'white');
+  colorCircle(ball.x, ball.y, ball.size, 'white');
 
   // net
   drawNet();
@@ -181,7 +195,12 @@ var resetBall = function resetBall() {
     winScreen = true;
   } else {}
 
-  ball.speedX = -ball.speedX;
+  //ball.speedX = -ball.speedX;
+  if (Math.sign(ball.speedX) === 1) {
+    ball.speedX = ball.initSpeed;
+  } else {
+    ball.speedX = -ball.initSpeed;
+  }
   ball.speedY = 0;
   ball.x = c.width / 2;
   ball.y = c.height / 2;
