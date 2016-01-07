@@ -1,13 +1,20 @@
 'use strict';
+
+window.requestAnimFrame = (function () {
+  return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+    window.setTimeout(callback, 1000 / 60);
+  };
+})();
+
 var c = undefined,
     // canvas
 cc = undefined,
     // canvascontext
 winScreen = false,
     ball = {
-  'speedX': 10,
-  'initSpeed': 10,
-  'speedY': 4,
+  'speedX': 5,
+  'initSpeed': 5,
+  'speedY': 2,
   'x': 50,
   'y': 50,
   'size': 10
@@ -42,10 +49,12 @@ window.onload = function () {
   cc = c.getContext('2d');
 
   var fps = 30;
-  setInterval(function () {
-    moveEverything();
-    drawEverything();
-  }, 1000 / fps);
+  //setInterval(() => {
+  //  moveEverything();
+  //  drawEverything();
+  //}, 1000/fps);
+
+  animationLoop();
 
   c.addEventListener('mousemove', function (event) {
     var mousePos = calculateMousePos(event);
@@ -53,6 +62,12 @@ window.onload = function () {
   });
 
   c.addEventListener('mousedown', handleMouseClick);
+};
+
+var animationLoop = function animationLoop() {
+  requestAnimFrame(animationLoop);
+  moveEverything();
+  drawEverything();
 };
 
 var handleMouseClick = function handleMouseClick(e) {

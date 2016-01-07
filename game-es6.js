@@ -1,11 +1,22 @@
 'use strict';
+
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function( callback ){
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
+
+
 let c, // canvas
     cc, // canvascontext
     winScreen = false,
     ball = {
-      'speedX': 10,
-      'initSpeed': 10,
-      'speedY': 4,
+      'speedX': 5,
+      'initSpeed': 5,
+      'speedY': 2,
       'x': 50,
       'y': 50,
       'size': 10
@@ -40,10 +51,12 @@ window.onload = () => {
   cc = c.getContext('2d');
 
   let fps = 30;
-  setInterval(() => {
-    moveEverything();
-    drawEverything();
-  }, 1000/fps);
+  //setInterval(() => {
+  //  moveEverything();
+  //  drawEverything();
+  //}, 1000/fps);
+
+  animationLoop();
 
   c.addEventListener('mousemove',
     function(event) {
@@ -53,6 +66,12 @@ window.onload = () => {
 
   c.addEventListener('mousedown', handleMouseClick);
   
+}
+
+let animationLoop = () => {
+  requestAnimFrame(animationLoop);
+  moveEverything();
+  drawEverything();
 }
 
 let handleMouseClick = (e) => {
